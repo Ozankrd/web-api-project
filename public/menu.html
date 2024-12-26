@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="../css/style.css">
+
+<header class="menu-header">
+  <div class="logo">
+    <h1>Cook Tail</h1>
+  </div>
+  <nav class="menu-nav">
+    <ul>
+      <li><a href="../cocktails/cocktails.html">Cocktails proposés</a></li>
+      <li id="auth-btn">
+        <a href="../login.html">Connexion</a>
+      </li>
+      <li id="account-btn" style="display: none;"> <!-- Bouton "Gérer mon espace" -->
+        <a href="../account.html" class="account" aria-label="Gérer mon espace">
+          <span class="icon">⚙️</span> Gérer mon espace
+        </a>
+      </li>
+      <li id="logout-btn" style="display: none;"> <!-- Bouton "Déconnexion" -->
+        <a href="#" onclick="logout()" aria-label="Déconnexion">
+          <span class="icon">🚪</span> Déconnexion
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  // Vérifier l'état de connexion de l'utilisateur
+  async function checkLoginStatus() {
+    try {
+      const response = await fetch('/api/users/status');
+      if (response.ok) {
+        const { isAuthenticated } = await response.json();
+        toggleAuthButtons(isAuthenticated);
+        if (isAuthenticated) {
+          socket.emit('userLoggedIn'); // Notifie les autres utilisateurs
+        }
+      } else {
+        toggleAuthButtons(false);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification de l\'état de connexion:', error);
+    }
+  }
+
+  // Basculer l'affichage des boutons
+  function toggleAuthButtons(isAuthenticated) {
+    const authBtn = document.getElementById('auth-btn');
+    const accountBtn = document.getElementById('account-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (isAuthenticated) {
+      authBtn.style.display = 'none';
+      accountBtn.style.display = 'inline-block';
+      logoutBtn.style.display = 'inline-block';
+    } else {
+      authBtn.style.display = 'inline-block';
+      accountBtn.style.display = 'none';
+      logoutBtn.style.display = 'none';
+    }
+  }
+
+  // Fonction de déconnexion
+  async function logout() {
+    try {
+      const response = await fetch('/api/users/logout', { method: 'POST' });
+      if (response.ok) {
+        alert('Vous avez été déconnecté.');
+        toggleAuthButtons(false);
+        window.location.href = '../index.html'; // Redirection vers l'accueil
+      } else {
+        alert('Une erreur est survenue lors de la déconnexion.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
+  }
+
+  // Gestion des notifications Socket.IO
+  socket.on('notification', (message) => {
+    console.log('Notification reçue :', message);
+  });
+
+  // Vérifier l'état de connexion au chargement
+  checkLoginStatus();
+</script>

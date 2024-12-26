@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apéritif</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="Découvrez les meilleurs cocktails sur Cook Tail. Cuisine, partage et savoure tes créations.">
+  <meta property="og:title" content="Cook Tail - Cuisine tes cocktails">
+  <meta property="og:description" content="Cuisine tes meilleurs cocktails avec Cook Tail.">
+  <meta property="og:image" content="images/cocktail-banner.jpg">
+  <meta property="og:url" content="https://www.cooktail.com">
+</head>
+<body>
+  <div id="menu-container"></div>
+
+  <!-- Bannière -->
+  <section class="banner">
+    <div class="banner-content">
+      <div class="banner-image">
+        <img src="images/cocktail-banner.jpg" alt="Cocktail" loading="lazy" />
+      </div>
+      <div class="banner-text">
+        <h1>Cook Tail</h1>
+        <p>Cuisine ton meilleurs cocktails.</p>
+        <a href="#" class="btn" aria-label="Réagir en ligne">Réagir en ligne</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="aperitif-section">
+    <div class="image-filter"></div>
+    <div class="text-container">
+        <h2>L'heure de cook</h2>
+        <p>Conçoit tes meilleurs alcools <br> avec tes meilleurs amis!</p>
+    </div>
+  </section>
+
+  <!-- Cocktails du moment -->
+  <section class="cocktails">
+    <h2>Cocktails du moment</h2>
+    <div class="cocktails-grid">
+      <div class="cocktail-item">
+        <img src="images/cocktail1.jpg" alt="Cocktail 1" class="gallery-img" loading="lazy">
+        <p><a href="details/cocktail1.html">Mojito</a></p>
+      </div>
+      <div class="cocktail-item">
+        <img src="images/cocktail2.jpg" alt="Cocktail 2" class="gallery-img" loading="lazy">
+        <p><a href="details/cocktail2.html">Piña Colada</a></p>
+      </div>
+      <div class="cocktail-item">
+        <img src="images/cocktail3.jpg" alt="Cocktail 3" class="gallery-img" loading="lazy">
+        <p><a href="details/cocktail3.html">Martini</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="parallax-section">
+    <div class="parallax-content"></div>
+  </section>
+
+  <div id="footer-container"></div>
+
+  <!-- Script pour inclure le menu, le footer et Socket.IO -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('newCocktail', (cocktail) => {
+      const cocktailsGrid = document.querySelector('.cocktails-grid');
+      const cocktailDiv = document.createElement('div');
+      cocktailDiv.className = 'cocktail-item';
+      cocktailDiv.innerHTML = `
+        <img src="${cocktail.image}" alt="${cocktail.name}" class="gallery-img" loading="lazy">
+        <p><a href="details/cocktail${cocktail.id}.html">${cocktail.name}</a></p>
+      `;
+      cocktailsGrid.appendChild(cocktailDiv);
+    });
+  </script>
+</body>
+</html>

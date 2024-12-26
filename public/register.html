@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styles pour centraliser les éléments */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f8f8f8;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 90%; /* Élargir le conteneur */
+      max-width: 500px; /* Limiter la largeur maximale */
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    form div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #loading {
+      font-size: 14px;
+      color: #888;
+      margin-top: 10px;
+    }
+
+    .alternative-action {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .alternative-action a {
+      color: #007BFF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .alternative-action a:hover {
+      text-decoration: underline;
+    }
+
+    .home-button {
+      margin-top: 20px;
+    }
+
+    .home-button button {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .home-button button:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Inscription</h1>
+    <form id="registerForm">
+      <div>
+        <label for="username">Nom d'utilisateur:</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div>
+        <label for="phoneNumber">Numéro de téléphone:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" required>
+      </div>
+      <div>
+        <label for="password">Mot de passe:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div>
+        <label for="confirmPassword">Confirmez votre mot de passe:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+      </div>
+      <button type="submit">Inscription</button>
+    </form>
+    <div id="loading" style="display: none;">Veuillez patienter...</div>
+    <div class="alternative-action">
+      <p>Déjà inscrit ?</p>
+      <a href="login.html" class="btn">Connexion</a>
+    </div>
+    <div class="home-button">
+      <button onclick="window.location.href='index.html'" aria-label="Retourner à l'accueil">Retour à l'accueil</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    document.getElementById('registerForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const confirmPassword = document.getElementById('confirmPassword').value.trim();
+      const loadingIndicator = document.getElementById('loading');
+
+      try {
+        loadingIndicator.style.display = 'block';
+
+        const response = await fetch('/api/users/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, email, phoneNumber, password, confirmPassword }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.error || 'Une erreur est survenue.');
+          loadingIndicator.style.display = 'none';
+          return;
+        }
+
+        socket.emit('newUserRegistered', { username, email });
+
+        alert('Inscription réussie !');
+        window.location.href = '/login.html';
+      } catch (error) {
+        console.error('Erreur lors de l\'inscription:', error);
+        alert('Une erreur inattendue est survenue.');
+      } finally {
+        loadingIndicator.style.display = 'none';
+      }
+    });
+
+    socket.on('notification', (message) => {
+      console.log('Notification reçue:', message);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+/* Reset de base */
+body, h1, h2, p, ul, li, a {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #13284E;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Corps */
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+  }
+  
+  /* === Bannière === */
+  .banner {
+    background-image: url('../images/banner-background.jpg');
+    background-size: cover;
+    background-position: center;
+    padding: 100px 20px;
+    position: relative;
+  }
+  
+  .banner-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+  }
+  
+  .banner-image img {
+    width: 550px;
+    height: 650px;
+    border-radius: 50% / 40%;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .banner-text {
+    color: #13284E;
+    text-align: left;
+  }
+  
+  .banner-text h1 {
+    font-size: 80px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .banner-text p {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .banner-text .btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background-color: #13284E;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 18px;
+  }
+  
+  /* === Cocktails du moment === */
+.cocktails {
+    padding: 40px 20px;
+    background-color: #FFF48D; /* Fond jaune */
+    text-align: center;
+    color: #03224C; /* Police bleue */
+  }
+  
+  .cocktails h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #03224C; /* Police bleue */
+  }
+  
+  .cocktails-grid {
+    display: flex;
+    justify-content: space-around;
+    gap: 0px; /* Réduction de l'espace */
+  }
+  
+  .cocktail-item {
+    text-align: center;
+    width: 500px; /* Augmenté légèrement */
+  }
+  
+  .cocktail-item img {
+    width: 100%;
+    height: 500px; /* Augmenté légèrement */
+    border-radius: 50%; /* Rendre l'image ovale */
+    object-fit: cover;
+    cursor: pointer; /* Indique que l'image est cliquable */
+    transition: transform 0.3s ease, border-radius 0.3s ease; /* Ajoute une transition fluide */
+  }
+  
+  .cocktail-item img:hover {
+    transform: scale(1.1); /* Agrandit légèrement l'image */
+    border-radius: 50%; /* Maintient la forme ovale */
+  }
+  
+  .cocktail-item p {
+    margin-top: 15px; /* Ajout d'un espace sous l'image */
+    font-size: 38px;
+    font-weight: bold;
+    color: #0000ff; /* Police bleue */
+  }
+  
+  
+  /* === Overlay pour plein écran === */
+  .fullscreen-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .fullscreen-overlay img {
+    max-width: 90%;
+    max-height: 90%;
+  }
+  
+  .fullscreen-overlay .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+  }
+/* === Menu === */
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FFF48D; /* Jaune vif */
+    padding: 20px 20px;
+    border-bottom: 2px solid #E8B735;
+  }
+  
+  .logo h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #13284E; /* Bleu foncé */
+  }
+  
+  .menu-nav ul {
+    display: flex;
+    align-items: center;
+    list-style: none;
+  }
+  
+  .menu-nav ul li {
+    margin-left: 20px;
+  }
+  
+  .menu-nav ul li a {
+    text-decoration: none;
+    color: #13284E;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .menu-nav ul li input[type="text"] {
+    padding: 8px 10px;
+    font-size: 16px;
+    border: 1px solid #13284E;
+    border-radius: 5px;
+  }
+  
+  .menu-nav ul li .login {
+    display: flex;
+    align-items: center;
+    font-size: 25px;
+  }
+  
+  .menu-nav ul li .login .icon {
+    margin-right: 5px;
+  }  
+
+ /* Aperitif Section */
+.aperitif-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 800px; /* Hauteur de la section */
+    position: relative;
+    
+    overflow: hidden; /* Empêche les débordements */
+}
+
+.aperitif-section::before,
+.aperitif-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%; /* Chaque moitié prend 50% de la largeur */
+    z-index: 1;
+}
+
+.aperitif-section::before {
+    left: 0;
+    background: url('../images/section1.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+.aperitif-section::after {
+    right: 0;
+    background: url('../images/section2.jpg') no-repeat center center;
+    background-size: cover;
+}
+
+/* Filtre sur l'image de droite */
+.image-filter {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); /* Couleur noire avec opacité à 40% */
+    z-index: 2; /* Doit être au-dessus de l'image mais en dessous du texte */
+}
+
+/* Texte */
+.text-container {
+    position: absolute; /* Positionnement précis */
+    right: 15%; /* Positionné vers le centre de l'image de droite */
+    text-align: center;
+    z-index: 3; /* Doit être au-dessus de tout */
+    color: white;
+    max-width: 600px;
+}
+
+.text-container h2 {
+    font-size: 4rem; /* Plus grand texte */
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
+}
+
+.text-container p {
+    font-size: 2rem;
+    font-family: 'Arial', sans-serif';
+}
+
+/* footer*/
+.footer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #03224C; /* Bleu foncé */
+    color: #F0E36B; /* Jaune doré */
+    padding: 70px;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .footer-column {
+    flex: 1;
+    padding: 10px;
+  }
+  
+  .footer-column h3 {
+    font-size: 30px;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .footer-column p {
+    font-size: 20px;
+    line-height: 1.6;
+  }
+  
+  .footer-column p:last-child {
+    margin-top: 10px;
+  }
+  .footer-column a {
+    color: inherit; /* Utilise la couleur du parent (texte normal) */
+    text-decoration: none; /* Supprime le soulignement */
+  }
+  
+  .footer-column a:hover {
+    text-decoration: none; /* Assure qu'il reste sans soulignement au survol */
+  }
+
+  /* Section Parallax */
+.parallax-section {
+    position: relative;
+    height: 700px; /* Ajustez la hauteur selon vos besoins */
+    background-image: url('../images/paralaxe.jpg'); /* Remplacez par le chemin de votre image */
+    background-attachment: fixed; /* Clé pour l'effet parallax */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .parallax-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="css/style.css">
+  <meta name="description" content="Connectez-vous pour accéder à vos cocktails préférés sur Cook Tail.">
+  <meta property="og:title" content="Cook Tail - Connexion">
+  <meta property="og:description" content="Rejoignez Cook Tail pour concocter vos meilleurs cocktails.">
+  <meta property="og:image" content="images/cocktail-banner.jpg">
+  <meta property="og:url" content="https://www.cooktail.com/login">
+  <style>
+    /* Styles pour centraliser les éléments */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f8f8f8;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .alternative-action {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .alternative-action a {
+      color: #007BFF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .alternative-action a:hover {
+      text-decoration: underline;
+    }
+
+    .home-button {
+      margin-top: 20px;
+    }
+
+    .home-button button {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .home-button button:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Connexion</h1>
+    <form id="loginForm">
+      <div>
+        <label for="email" aria-label="Votre email">Email :</label>
+        <input type="email" id="email" name="email" required aria-required="true">
+      </div>
+      <div>
+        <label for="password" aria-label="Votre mot de passe">Mot de passe :</label>
+        <input type="password" id="password" name="password" required aria-required="true">
+      </div>
+      <button type="submit" aria-label="Se connecter">Connexion</button>
+    </form>
+    <div class="alternative-action">
+      <p>Pas encore inscrit ?</p>
+      <a href="register.html" class="btn" aria-label="Inscrivez-vous">Inscrivez-vous !</a>
+    </div>
+    <div class="home-button">
+      <button onclick="window.location.href='index.html'" aria-label="Retourner à l'accueil">Retour à l'accueil</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const button = e.target.querySelector('button');
+      button.disabled = true;
+      button.textContent = 'Connexion...';
+
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.error || 'Une erreur est survenue.');
+          button.disabled = false;
+          button.textContent = 'Connexion';
+          return;
+        }
+
+        alert('Connexion réussie !');
+        socket.emit('userLoggedIn', { email });
+        window.location.href = 'index.html';
+      } catch (error) {
+        console.error('Erreur lors de la connexion:', error);
+        alert('Une erreur inattendue est survenue.');
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Connexion';
+      }
+    });
+
+    socket.on('notification', (message) => {
+      console.log('Notification reçue :', message);
+    });
+  </script>
+</body>
+</html>
