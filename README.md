@@ -88,22 +88,4 @@ Avant de continuer, assurez-vous d'avoir :
 3. **Ajouter un cocktail** : Soumettez une recette et téléchargez une image.
 4. **Interagir** : Aimez ou commentez les recettes disponibles.
 
----
 
-## Contributions
-
-Nous accueillons volontiers les contributions pour améliorer ce projet. Suivez ces étapes :
-
-1. Forkez le dépôt.
-2. Créez une branche pour votre fonctionnalité ou correctif :
-   ```bash
-   git checkout -b ma-feature
-   ```
-3. Effectuez vos modifications.
-4. Soumettez une pull request.
-
----
-
-## Licence
-
-Ce projet est sous licence MIT. Consultez le fichier [LICENSE](LICENSE) pour plus d'informations.
