@@ -1,91 +1,89 @@
-# Gestion de Cocktails avec Double Authentification
+# Cocktail Management with Two-Factor Authentication
 
 ## Introduction
-Ce projet vise à offrir une plateforme web de gestion de cocktails, permettant aux utilisateurs de publier, consulter et interagir avec des recettes tout en garantissant une sécurité renforcée grâce à la double authentification.
+This project provides a web platform for managing cocktail recipes. Users can publish, view, and interact with recipes while ensuring enhanced security through two-factor authentication.
 
 ---
 
-## Table des Matières
-- [Fonctionnalités](#fonctionnalités)
-- [Prérequis](#prérequis)
+## Table of Contents
+- [Features](#features)
+- [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [Utilisation](#utilisation)
-- [Contributions](#contributions)
-- [Licence](#licence)
+- [Usage](#usage)
+  
 
 ---
 
-## Fonctionnalités
+## Features
 
-### Gestion des Utilisateurs
-- **Inscription** : Création de compte avec validation des champs.
-- **Connexion** : Sécurisée via Passport.js et double authentification par code temporaire.
-- **Mise à jour** : Modification des informations personnelles (email, mot de passe).
-- **Déconnexion** : Gestion sécurisée des sessions.
+### User Management
+- **Registration**: Account creation with field validation.
+- **Login**: Secure login using Passport.js and two-factor authentication via temporary codes.
+- **Profile Update**: Update personal information (email, password).
+- **Logout**: Secure session management.
 
-### Gestion des Cocktails
-- **Ajout de Recettes** : Téléversement d'images et gestion des métadonnées.
-- **Suppression** : Accès restreint aux propriétaires des recettes.
-- **Consultation** : Affichage de la liste et des détails des cocktails.
+### Cocktail Management
+- **Add Recipes**: Upload images and manage metadata.
+- **Delete Recipes**: Access restricted to recipe owners.
+- **View Recipes**: Display cocktail lists and details.
 
-### Interactions en Temps Réel
-- **Notifications** : Mise à jour en direct des ajouts et suppressions de cocktails via Socket.IO.
+### Real-Time Interactions
+- **Notifications**: Real-time updates on new and deleted cocktails using Socket.IO.
 
 ---
 
-## Prérequis
+## Prerequisites
 
-Avant de continuer, assurez-vous d'avoir :
+Before you begin, ensure you have met the following requirements:
 
-- Node.js installé (version 14 ou supérieure).
-- PostgreSQL configuré et en cours d'exécution.
-- Un compte Mailtrap pour le test des emails.
-- Une connaissance de base en JavaScript et gestion des API REST.
+- Node.js installed (version 14 or higher).
+- PostgreSQL installed and running.
+- A Mailtrap account for email testing.
+- Basic knowledge of JavaScript and REST API management.
 
 ---
 
 ## Installation
 
-1. Clonez ce dépôt :
+1. Clone this repository:
    ```bash
-   git clone <URL_DU_DEPOT>
+   git clone https://github.com/Ozankrd/web-api-project
    ```
-2. Accédez au répertoire du projet :
+2. Navigate to the project directory:
    ```bash
-   cd gestion-cocktails
+   cd cocktail-management
    ```
-3. Installez les dépendances :
+3. Install dependencies:
    ```bash
    npm install
    ```
-4. Configurez les variables d'environnement dans un fichier `.env` :
+4. Configure environment variables in a `.env` file:
    ```
-   DB_HOST=<hôte_de_la_base_de_données>
-   DB_USER=<utilisateur>
-   DB_PASSWORD=<mot_de_passe>
-   MAILTRAP_USER=<utilisateur_mailtrap>
-   MAILTRAP_PASSWORD=<mot_de_passe_mailtrap>
+   DB_HOST=<database_host>
+   DB_USER=<database_user>
+   DB_PASSWORD=<database_password>
+   MAILTRAP_USER=<mailtrap_user>
+   MAILTRAP_PASSWORD=<mailtrap_password>
    ```
-5. Synchronisez la base de données :
+5. Synchronize the database:
    ```bash
    npx sequelize db:migrate
    ```
-6. Lancez le serveur :
+6. Start the server:
    ```bash
    npm start
    ```
 
 ---
 
-## Utilisation
+## Usage
 
-### Accéder à l'interface
-- Ouvrez un navigateur et accédez à `http://localhost:3000`.
+### Access the Interface
+- Open a browser and go to `http://localhost:3000`.
 
-### Fonctionnalités Principales
-1. **Créer un compte** : Remplissez le formulaire d'inscription.
-2. **Se connecter** : Entrez vos identifiants et validez le code temporaire reçu par email.
-3. **Ajouter un cocktail** : Soumettez une recette et téléchargez une image.
-4. **Interagir** : Aimez ou commentez les recettes disponibles.
-
+### Key Features
+1. **Create an Account**: Fill out the registration form.
+2. **Log In**: Enter your credentials and validate the temporary code received via email.
+3. **Add a Cocktail**: Submit a recipe and upload an image.
+4. **Interact**: Like or comment on available recipes.
 
