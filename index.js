@@ -11,6 +11,7 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+const { ensureVerified } = require('./auth');
 
 // Configurer Socket.IO
 io.on('connection', (socket) => {
@@ -37,6 +38,7 @@ app.use(
     secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
+    cookie: { maxAge: 5 * 60 * 1000 }, // Expire après 5 minutes
   })
 );
 
@@ -48,12 +50,14 @@ app.use(passport.session());
 // Configurer les dossiers publics
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes
+// Routes avec protection
+const { ensureAuthenticated } = require('./auth');
 app.use('/api/users', require('./routes/users'));
-app.use('/api/cocktails', require('./routes/cocktails'));
-app.use('/api/reactions', require('./routes/reactions'));
-
-
+app.use('/api/cocktails', ensureVerified, require('./routes/cocktails'));
+app.use('/api/reactions', ensureVerified, require('./routes/reactions'));
+app.get('/account.html', ensureVerified, (req, res, next) => {
+  res.sendFile(path.join(__dirname, 'public', './public/account.html'));
+});
 // Gestion des erreurs 404
 app.use((req, res, next) => {
   res.status(404).json({ error: 'Route non trouvée' });

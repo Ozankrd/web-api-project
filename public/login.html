@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Cook Tail</title>
   <link rel="stylesheet" href="css/style.css">
   <meta name="description" content="Connectez-vous pour accéder à vos cocktails préférés sur Cook Tail.">
   <meta property="og:title" content="Cook Tail - Connexion">
@@ -147,7 +147,7 @@
 
         alert('Connexion réussie !');
         socket.emit('userLoggedIn', { email });
-        window.location.href = 'index.html';
+        window.location.href = 'verifylogin.html';
       } catch (error) {
         console.error('Erreur lors de la connexion:', error);
         alert('Une erreur inattendue est survenue.');

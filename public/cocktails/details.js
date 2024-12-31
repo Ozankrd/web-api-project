@@ -27,7 +27,7 @@ async function loadCocktailDetails() {
     document.getElementById('cocktail-description').textContent = cocktail.description;
     document.getElementById('cocktail-difficulty').textContent = `Difficulté : ${cocktail.difficulty || 'Non spécifiée'}`;
     document.getElementById('cocktail-preparation-time').textContent = `Temps de préparation : ${cocktail.preparationTime || 0} min`;
-    document.getElementById('cocktail-cooking-time').textContent = `Temps de cuisson : ${cocktail.cookingTime || 0} min`;
+    document.getElementById('cocktail-cooking-time').textContent = `Nombre de personne : ${cocktail.cookingTime || 0} `;
 
     // Affiche le nom de l'utilisateur
     const username = cocktail.User?.username || 'Utilisateur inconnu';

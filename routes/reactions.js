@@ -1,11 +1,11 @@
 const express = require('express');
 const Reaction = require('../models/Reaction');
-const auth = require('../middlewares/auth');
+const { ensureAuthenticated } = require('../auth'); // Import correct
 const router = express.Router();
 const User = require('../models/User');
 
 // Ajouter une réaction
-router.post('/', auth, async (req, res) => {
+router.post('/', ensureAuthenticated, async (req, res) => {
   try {
     const { cocktailId, type, comment } = req.body;
 

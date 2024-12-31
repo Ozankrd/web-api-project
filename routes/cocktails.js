@@ -3,11 +3,11 @@ const multer = require('multer');
 const path = require('path');
 const Cocktail = require('../models/Cocktail');
 const User = require('../models/User'); // Assurez-vous que le modèle User est bien importé
-const auth = require('../middlewares/auth'); // Importez le middleware d'authentification
+const { ensureAuthenticated, ensureVerified } = require('../auth'); // Import explicite des fonctions
 
 const router = express.Router();
 
-// Configuration multer (comme dans votre code actuel)
+// Configuration multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, '../public/cocktails/uploads'));
@@ -19,8 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Protégez la route de création de cocktails
-router.post('/upload', auth, upload.single('image'), async (req, res) => {
-  console.log('Middleware auth exécuté pour upload. Utilisateur :', req.user);
+router.post('/upload', ensureAuthenticated, upload.single('image'), async (req, res) => {
   try {
     const { name, description, ingredients, difficulty, preparationTime, cookingTime } = req.body;
     const imageUrl = `/cocktails/uploads/${req.file.filename}`;
@@ -35,7 +34,6 @@ router.post('/upload', auth, upload.single('image'), async (req, res) => {
       userId: req.user.id,
     });
 
-    // Notifier tous les clients connectés d'un nouveau cocktail
     req.io.emit('newCocktail', cocktail);
 
     res.status(201).json(cocktail);
@@ -45,31 +43,32 @@ router.post('/upload', auth, upload.single('image'), async (req, res) => {
   }
 });
 
-// Supposons qu'il existe une route pour supprimer un cocktail
-router.delete('/:id', auth, async (req, res) => {
+// Route pour supprimer un cocktail
+router.delete('/:id', ensureAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
     const cocktail = await Cocktail.findByPk(id);
 
     if (!cocktail) {
-      return res.status(404).json({ error: 'Cocktail not found.' });
+      return res.status(404).json({ error: 'Cocktail non trouvé.' });
+    }
+
+    if (cocktail.userId !== Number(req.user.id)) {
+      return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à supprimer ce cocktail.' });
     }
 
     await cocktail.destroy();
-
-    // Notifier tous les clients connectés de la suppression
     req.io.emit('deleteCocktail', id);
 
-    res.status(200).json({ message: 'Cocktail deleted successfully.' });
+    res.status(200).json({ message: 'Cocktail supprimé avec succès.' });
   } catch (error) {
-    console.error('Error deleting cocktail:', error);
-    res.status(500).json({ error: 'Failed to delete cocktail.' });
+    console.error('Erreur lors de la suppression du cocktail :', error);
+    res.status(500).json({ error: 'Échec de la suppression du cocktail.' });
   }
 });
 
-
-// Route pour récupérer tous les cocktails avec les informations des utilisateurs
-router.get('/', async (req, res) => {
+// Route pour récupérer tous les cocktails
+router.get('/', ensureVerified, async (req, res) => {
   try {
     const cocktails = await Cocktail.findAll({
       include: {
@@ -84,19 +83,18 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Route pour récupérer un cocktail par ID avec son utilisateur
-router.get('/:id', async (req, res) => {
+// Route pour récupérer un cocktail par ID
+router.get('/:id', ensureVerified, async (req, res) => {
   try {
     const { id } = req.params;
     const cocktail = await Cocktail.findByPk(id, {
-      include: { model: User, attributes: ['username'] }, // Inclut uniquement le username
+      include: { model: User, attributes: ['username'] },
     });
 
     if (!cocktail) {
       return res.status(404).json({ error: 'Cocktail not found.' });
     }
 
-    // Notifier les clients connectés via Socket.IO qu'un cocktail a été consulté
     req.io.emit('cocktailViewed', {
       message: `${cocktail.name} a été consulté.`,
       cocktailId: id,
@@ -108,36 +106,9 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch cocktail.' });
   }
 });
-// Route pour supprimer un cocktail
-router.delete('/:id', auth, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const cocktail = await Cocktail.findByPk(id);
 
-    if (!cocktail) {
-      return res.status(404).json({ error: 'Cocktail non trouvé.' });
-    }
-
-    // Vérifiez si l'utilisateur est le créateur du cocktail
-    if (cocktail.userId !== req.user.id) {
-      return res.status(403).json({ error: 'Vous n\'êtes pas autorisé à supprimer ce cocktail.' });
-    }
-
-    await cocktail.destroy();
-
-    // Émettre un événement Socket.IO pour mettre à jour la liste côté client
-    req.io.emit('deleteCocktail', id);
-
-    res.status(200).json({ message: 'Cocktail supprimé avec succès.' });
-  } catch (error) {
-    console.error('Erreur lors de la suppression du cocktail :', error);
-    res.status(500).json({ error: 'Échec de la suppression du cocktail.' });
-  }
-});
-
-
-// Route de déconnexion (inutile ici pour les cocktails mais gardée par sécurité)
-router.get('/logout', (req, res) => {
+// Déconnexion (optionnelle ici)
+router.get('/logout', ensureAuthenticated, (req, res) => {
   req.logout((err) => {
     if (err) {
       console.error('Erreur lors de la déconnexion:', err);
@@ -148,7 +119,6 @@ router.get('/logout', (req, res) => {
         console.error('Erreur lors de la destruction de la session:', destroyErr);
         return res.status(500).json({ error: 'Erreur lors de la destruction de la session.' });
       }
-      console.log('Session détruite avec succès.');
       res.status(200).json({ message: 'Déconnecté avec succès.' });
     });
   });

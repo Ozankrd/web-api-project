@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cook Tail</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styles pour centraliser et élargir le conteneur */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #f8f8f8;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    form div {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      width: 100%;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007BFF;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #loading {
+      font-size: 14px;
+      color: #888;
+      margin-top: 10px;
+    }
+
+    .home-button {
+      margin-top: 20px;
+    }
+
+    .home-button button {
+      background-color: #6c757d;
+      color: white;
+      font-size: 16px;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .home-button button:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Vérification</h1>
+    <form id="verifyForm">
+      <div>
+        <label for="code">Code de vérification :</label>
+        <input type="text" id="code" name="code" maxlength="4" pattern="[0-9]{4}" required>
+      </div>
+      <button type="submit">Vérifier</button>
+    </form>
+    <div id="loading" style="display: none;">Vérification en cours...</div>
+    <div class="home-button">
+      <button onclick="window.location.href='login.html'" aria-label="Retourner à l'accueil">Retour à la page de connexion</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let isVerified = false;
+
+    // Avant de quitter la page
+    window.addEventListener('beforeunload', async (event) => {
+      if (!isVerified) {
+        try {
+          await fetch('/api/users/logout', { method: 'GET' });
+        } catch (error) {
+          console.error('Erreur lors de la déconnexion :', error);
+        }
+      }
+    });
+
+    document.getElementById('verifyForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const code = document.getElementById('code').value.trim();
+      const loadingIndicator = document.getElementById('loading');
+
+      // Validation client
+      if (!/^\d{4}$/.test(code)) {
+        alert('Le code doit contenir exactement 4 chiffres.');
+        return;
+      }
+
+      try {
+        loadingIndicator.style.display = 'block';
+
+        const response = await fetch('/api/users/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.error || 'Code incorrect.');
+          loadingIndicator.style.display = 'none';
+          return;
+        }
+
+        isVerified = true; // L'utilisateur a validé le code
+        socket.emit('userVerified', { message: 'Un utilisateur a vérifié son code avec succès.' });
+
+        alert('Vérification réussie !');
+        window.location.href = '/index.html';
+      } catch (error) {
+        console.error('Erreur lors de la vérification :', error);
+        alert('Une erreur inattendue est survenue.');
+      } finally {
+        loadingIndicator.style.display = 'none';
+      }
+    });
+
+    socket.on('notification', (message) => {
+      console.log('Notification reçue :', message);
+    });
+  </script>
+</body>
+</html>
